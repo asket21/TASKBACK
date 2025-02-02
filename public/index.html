@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Задачки</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65"
+      crossorigin="anonymous"
+    />
+  </head>
+  <body>
+    <h1>Фронт Таск сайта</h1>
+    <div class="container">
+      <form class="form" action="/api/user" method="POST">
+        <label class="form-label">Ваше имя:
+          <input 
+            type="text"
+            name="name"
+            id="name"
+            placeholder="Введите имя"
+            required
+            autofocus
+          />
+        </label>
+        <label class="form-label">
+          Почта:
+          <input 
+            type="email"
+            name="email"
+            id="email"
+            placeholder="Введите email"
+            required
+          />
+        </label>
+        <label class="form-label">Профессия:<select class="form-select" name='role' required>
+            <option value="student" selected>Студент</option>
+            <option value="teacher">Преподаватель</option>
+          </select>
+        </label>
+        <input class="btn btn-primary" type="submit" value="Отправить" />
+      </form>
+
+
+      <form class="form" action="/api/object" method="POST">
+        <label class="form-label">Имя объекта:
+          <input form-control
+            type="text"
+            name="title"
+            id="title"
+            placeholder="Имя объекта"
+            required
+            
+          />
+        </label>
+        <label class="form-label">
+          Менеджер Объекта
+          <input form-control
+            type="text"
+            name="manager"
+            id="manager"
+            placeholder="Укажите Менеджера объекта"
+            required
+          />
+        </label>
+        <label class="form-label">
+          Адрес:
+          <input form-control
+            type="text"
+            name="address"
+            id="address"
+            placeholder="Укажите адрес объекта"
+            required
+          />
+          </select>
+        </label>
+        <button class="btn btn-primary">Отправить</button>
+      </form>
+    </div>
+  </body>
+</html>
