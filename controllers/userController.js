@@ -1,10 +1,6 @@
-const pool = require('../db'),
-bodyParser = require('body-parser')
-
-
+const pool = require('../db')
 
 class UserController {
-    
 
     async getAllUsers(req, res) {
 
@@ -20,39 +16,24 @@ class UserController {
        
     }
 
-    async getUser(req, res) {
-        const id = parseInt(req.params.id, 10);
-        try {
-          const user = await pool.query(`SELECT * FROM users WHERE id = $1`, [id]);
-          res.json(user.rows);
-        } catch (error) {
-          console.log(error);
-        }
-      }
-
     async createUser(req, res) {
-        
-        const {name, email, role} = req.body
 
-        if(!req.body) return res.sendStatus(400);
-        
+        const {name, email} = req.body
 
         try {
-            const user = await pool.query(`INSERT INTO users (name, email, role) VALUES ($1, $2, $3) RETURNING *`, [name,email,role]);
+            const user = await pool.query(`INSERT INTO users (name, email) VALUES ($1, $2) RETURNING *`, [name,email]);
             res.json(user.rows)
         } catch (error) {
             console.log(error)
         }
     }
     async updateUser(req, res) {
-        
-        
+
         const id = parseInt(req.params.id, 10);
-        console.log(req.body)
-        const {name, email, role} = req.body
+        const {name, email} = req.body
 
         try {
-            const user = await pool.query(`UPDATE users SET name = $1, email =$2, role = $3 WHERE id =$4 RETURNING *`, [name, email, role, id]);
+            const user = await pool.query(`UPDATE users SET name = $1, email =$2 WHERE id =$3 RETURNING *`, [name,email, id]);
             res.json(user.rows)
         } catch (error) {
             console.log(error)
