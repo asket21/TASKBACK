@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 const express = require("express"),
   app = express();
 bodyParser = require("body-parser");
@@ -39,51 +38,6 @@ async function initilizeAPP() {
 }
 
 initilizeAPP();
-=======
-
-const express = require('express')
-
-const createTables = require('./db/setup')
-const pool = require('./db/index')
-
-const userRouter = require('./Routes/userRouter')
-
-const app = express()
-
-
-const PORT = process.env.PORT || 5004
-
-
-app.use(express.json())
-app.use('/api', userRouter)
-
-
-async function initilizeAPP() {
-
-    try {
-
-        await createTables(pool);
-        app.listen(PORT, () => {
-            console.log('Server is running on port,' + PORT)
-        })
-
-app
-
-    } catch (error) {
-
-        console.error('Error initilizing app', error.massage);
-
-    }
-}
-
-
-initilizeAPP()
-
-
-
-
-
->>>>>>> b124a34ea8f7ad303d456eb33f60f05d29382e79
 
 // const users = []
 // //GET
@@ -95,22 +49,12 @@ initilizeAPP()
 
 // app.get('/greet/:name', (req,res) => {
 
-<<<<<<< HEAD
 //     res.send('Hello ' + req.params.name + '!')
 
 //     })
 
 // app.get('/users', (req, res) => {
 
-=======
-
-//     res.send('Hello ' + req.params.name + '!')
-    
-//     })
-
-// app.get('/users', (req, res) => {
-    
->>>>>>> b124a34ea8f7ad303d456eb33f60f05d29382e79
 //     res.send(users)
 
 // })
@@ -119,14 +63,8 @@ initilizeAPP()
 
 // app.post('/users/add', (req,res) => {
 
-<<<<<<< HEAD
 //     if(!req.body) return res.sendStatus(400)
 
-=======
-
-//     if(!req.body) return res.sendStatus(400)
-    
->>>>>>> b124a34ea8f7ad303d456eb33f60f05d29382e79
 //     const userName = req.body.name
 //     const userEmail = req.body.email
 //     const user = {name: userName, email: userEmail}
@@ -143,17 +81,8 @@ initilizeAPP()
 //     users.push(user)
 //     res.send(user)
 
-<<<<<<< HEAD
-=======
-
->>>>>>> b124a34ea8f7ad303d456eb33f60f05d29382e79
 // })
 
 // app.listen(PORT, () => {
 //     console.log('Server is running on port ${PORT}')
 // })
-<<<<<<< HEAD
-=======
-
-
->>>>>>> b124a34ea8f7ad303d456eb33f60f05d29382e79

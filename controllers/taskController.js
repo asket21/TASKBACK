@@ -1,7 +1,7 @@
 const pool = require("../db");
 
 class taskController {
-  async getAlltasks(req, res) {
+  async getAllTasks(req, res) {
     try {
       const task = await pool.query(`SELECT * FROM tasks`);
       res.json(task.rows);
@@ -10,7 +10,7 @@ class taskController {
     }
   }
 
-  async gettask(req, res) {
+  async getTask(req, res) {
     const id = parseInt(req.params.id, 10);
     try {
       const task = await pool.query(`SELECT * FROM tasks WHERE id = $1`, [id]);
@@ -20,7 +20,7 @@ class taskController {
     }
   }
 
-  async createtask(req, res) {
+  async createTask(req, res) {
     
     const { object_id, link, manager_id, status} = req.body;
 
@@ -35,7 +35,7 @@ class taskController {
       console.log(error);
     }
   }
-  async updatetask(req, res) {
+  async updateTask(req, res) {
     const id = parseInt(req.params.id, 10);
     const { object_id, link, manager_id, status } = req.body;
 
@@ -50,7 +50,7 @@ class taskController {
     }
   }
 
-  async deletetask(req, res) {
+  async deleteTask(req, res) {
     const id = req.params.id;
     const task = await pool.query(`DELETE FROM tasks WHERE id =$1 `, [id]);
     res.json(task.rows[0]);
