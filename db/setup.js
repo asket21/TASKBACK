@@ -1,10 +1,8 @@
 
-async function createTables(pool) {
+async function createTables(sequelize) {
 
 
     try {
-
-
         const createUsersTable = `
         CREATE TABLE IF NOT EXISTS users (
 
@@ -12,11 +10,22 @@ async function createTables(pool) {
             login VARCHAR(100) NOT NULL,
             password VARCHAR(100) NOT NULL,
             name VARCHAR(100) NOT NULL,
-            role VARCHAR(10) NOT NULL DEFAULT 'intern',
+            role VARCHAR(10) NOT NULL,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
         `;
-            // email VARCHAR(100) UNIQUE NOT NULL,
+        const createObjectTable = `
+        
+        CREATE TABLE IF NOT EXISTS objects (
+
+            id SERIAL PRIMARY KEY,
+            manager_id INT REFERENCES users(id) NOT NULL,
+            title VARCHAR(255) NOT NULL,
+            address VARCHAR(255) NOT NULL,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    )
+        `;
+
         const createPostsTable = `
         
         CREATE TABLE IF NOT EXISTS tasks (
