@@ -1,12 +1,13 @@
 const express = require("express"),
-  app = express();
 bodyParser = require("body-parser");
-
+const session = require('express-session');
+const apiRouter = require('./routes/apiRouter');
+const path = require('path');
+const sequelize = require("./db//db");
 const createTables = require("./db/setup");
-const pool = require("./db/index");
+const pageRouter = require('./routes/page');
 
-const userRouter = require("./routes/userRouter");
-const objectRouter = require("./routes/objectRouter");
+const app = express();
 
 const urlencodedParser = bodyParser.urlencoded({
   extended: false,
@@ -14,21 +15,13 @@ const urlencodedParser = bodyParser.urlencoded({
 
 const PORT = process.env.PORT || 5005;
 
-app.use(express.json());
-app.use(express.static("public"));
-app.get("/", (req, res) => {
-  res.render("index");
-});
-
-app.use("/api", urlencodedParser, objectRouter);
-
-app.use("/api", urlencodedParser, userRouter);
+sequelize.sync();
 
 async function initilizeAPP() {
   try {
-    await createTables(pool);
+    await createTables(sequelize);
     app.listen(PORT, () => {
-      console.log("Server is running on port," + PORT);
+      console.log("Server is running on port, http://localhost:" + PORT);
     });
 
     app;
@@ -36,6 +29,21 @@ async function initilizeAPP() {
     console.error("Error initilizing app", error.massage);
   }
 }
+
+
+app.use(
+  urlencodedParser,
+  express.json(),
+  express.json({ limit: '5mb' }),
+  session({
+    secret: 'your-secret-key',
+    resave: false,
+    saveUninitialized: false,
+  }),  
+  pageRouter,
+  apiRouter,
+  express.static(path.join(__dirname, 'public')));
+// app.listen(PORT)
 
 initilizeAPP();
 

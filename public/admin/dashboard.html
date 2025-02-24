@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="../styles/style.css" />
+    <title>Админка</title>
+  </head>
+  <body>
+    <header class="header">
+      <div class="header-container">
+        <a href=""
+          ><img
+            class="logo"
+            src="http://posadmin.ru/dist/images/logo.png"
+            alt="LOGO"
+        /></a>
+        <nav class="menu">
+          <ul class="menu-list">
+            <li class="menu-item">
+              <a href="">Добавление</a>
+            </li>
+            <li class="menu-item">
+              <a href="">Редактирование</a>
+            </li>
+            <li class="menu-item">
+              <a href="">Статистика</a>
+            </li>
+          </ul>
+        </nav>
+        <button class="button instance-button logout-button">Выйти</button>
+      </div>
+    </header>
+    <main>
+    <section>
+      <h2 class="section-title">
+        <svg class="arrow-icon" viewBox="0 0 24 24">
+          <path d="M7 10l5 5 5-5z"/>
+        </svg>
+        <span>Пользователи</span>
+        
+        <button
+          class="button instance-button add-user-button call-dialog-button "
+          data-dialog-type="users"
+        >
+          Добавить пользователя
+        </button>
+      </h2>
+      
+      <div class="section-content"><input type="text" placeholder="Поиск..." class="user-search">
+      <ul class="users-list">
+     
+      </ul></div>
+      
+      
+    </section>
+    
+    <section>
+      <h2 class="section-title">
+        <svg class="arrow-icon" viewBox="0 0 24 24">
+          <path d="M7 10l5 5 5-5z"/>
+        </svg>
+        <span>Объекты</span>
+        <button
+          class="button instance-button add-object-button call-dialog-button" data-dialog-type="object"
+        >
+          Добавить объект
+        </button>
+      </h2>
+      <div class="section-content">
+        <input type="text" placeholder="Поиск..." class="object-search">
+      <ul class="objects-list"></ul>
+      </div>
+      
+    </section>
+    <section>
+      <h2 class="section-title">
+        <svg class="arrow-icon" viewBox="0 0 24 24">
+          <path d="M7 10l5 5 5-5z"/>
+        </svg>
+        <span>Задачи</span>
+        <button
+          class="button instance-button add-task-button call-dialog-button"
+        >
+          Добавить задачу
+        </button>
+      </h2>
+      
+      <div class="section-content"><input type="text" placeholder="Поиск..." class="task-search">
+      <ul class="tasks-list"></ul>
+    </section></div>
+      
+
+    <dialog class="form-dialog" id="form-dialog">
+      <button class="close-dialog-button">Закрыть</button>
+      <div class="form-container"></div>
+    </dialog>
+
+    <dialog class="tooltip"></dialog>
+  </main>
+
+
+<!-- Темплейты  -->
+<template class="object-about-item">
+ 
+    <article class="object-card">
+      <button class="button instance-button close-item">Закрыть</button>
+        <div class="description">
+         <label class="form-label">
+          <span class="form-label-text">Название объекта</span>
+        <h3 class="name"></h3>
+      </label>
+      <label class="form-label">
+          <label  for="autoSizingSelect">Менеджер</label>
+          <select name="manager_id" class="choose_manager" >
+            <option selected class="user-select">Выберите...</option>
+          </select>
+        </label>
+      <label class="form-label">
+        <span class="form-label">Адрес</span>
+        <p class="address"></p>
+      </label>
+      <label class="form-label">
+          <label  for="autoSizingSelect">Платформа</label>
+          <select name="platform" class="choose_platform" >
+            <option selected class="platform-select">Выберите...</option>
+          </select>
+        </label>
+        <label class="form-label">
+          <span class="form-label">id Телеграм чата объекта</span>
+          <p class="telegram_object_chat_id"></p>
+        </label>
+        <label class="form-label">
+          <span class="form-label">Cсылка на Телеграм чата объекта</span>
+          <p class="telegram_object_chat_link"></p>
+        </label>
+        <button 
+        class="button instance-button edit-about-object-button call-dialog-button"
+        data-dialog-type="password">
+          Редактировать
+        </button>
+      </div>   
+    </article>
+
+</template>
+<!-- Пользователи -->
+    <template id="users-list-item">
+      <li class="users-list-item">
+        <article class="user-card">
+          <button class="button instance-button close-item">Закрыть</button>
+            <div class="description">
+            <span class="form-label-text">Имя:</span>                    
+            <h3 class="name"></h3>
+            <span class="form-label-text">Логин:</span>
+            <p class="login"></p>
+            <select class="form-select "  >
+              <option selected class="role">Выберите роль</option>
+              <option name="role" value="admin">Админ</option>
+              <option name="role"value="manager">Менеджер</option>
+              <option name="role" value="engineer">Инженер</option>
+            </select>
+            <div class="card-button">
+            <button class="button instance-button edit-user-button">
+              <span class="edit-button-text">Редактировать</span>
+            </button>
+            <button class="button instance-button delete-user-button">
+                Удалить пользователя
+              </button>
+              <button 
+              class="button instance-button edit-password-button call-dialog-button"
+              data-dialog-type="password">
+                Изменить пароль
+              </button>
+            </div>
+          </div>
+        </article>
+      </li>
+    </template>
+
+
+<!-- Объекты -->
+
+    <template id="objects-list-item">
+      <li class="objects-list-item">
+        <article class="object-card">
+          <button class="button instance-button close-item">Закрыть</button>
+            <div class="description">
+            <span class="form-label-text">Название</span>                    
+            <h3 class="name"></h3>                   
+            <div class="card-button">
+            <button class="button instance-button about_object-button call-dialog-button" >
+              <span class="about-button-text" data-dialog-type="about-object">Подробнее</span>
+            </button>            
+            </div>
+          </div>
+        </article>
+      </li>
+    </template>
+
+
+
+<!-- Темплейты  формы -->
+
+    <template class="add-user-form">
+      <form class="form form-user">
+        <label class="form-label">
+          <span class="form-label">Имя пользователя</span>
+          <input type="text" name="name" class="textfield" />
+        </label>
+        <label class="form-label">
+          <span class="form-label">Логин</span>
+          <input type="text" name="login" class="textfield" />
+        </label>
+        <label class="form-label">
+          <span class="form-label">Пароль</span>
+          <input type="password" name="password" class="textfield" />
+        </label>
+        <label class="form-label">
+          <label  for="autoSizingSelect">Роль</label>
+          <select name="role" class="user-role" >
+            
+            <option  value="admin">Админ</option>
+            <option value="manager">Менеджер</option>
+            <option  value="engineer">Инженер</option>
+          </select>
+        </label>
+        <button type="submit" class="button instance-button call-dialog-button">
+          Добавить пользователя
+        </button>
+      </form>
+    </template>
+
+    <template class="edit-password-form">
+      <form class="form password-user">
+        <label class="form-label">
+          <span class="form-label">Введите новый пароль</span>
+          <input type="password" name="password" class="textfield" />
+        </label>
+        <button type="submit">Cохранить</button>
+    </template>
+<!-- Форма создания объекта  -->
+    <template class="add-object-form">
+      <form class="form form-object">
+          <label class="form-label">
+            <span class="form-label">Название объекта</span>
+            <input type="text" name="title" class="textfield" />
+          </label>
+          <label class="form-label">
+              <label  for="autoSizingSelect">Менеджер</label>
+              <select name="manager_id" class="choose_manager" >
+                <option selected class="">Инженер</option>
+                
+              </select>
+            </label>
+          <label class="form-label">
+            <span class="form-label">Адрес</span>
+            <input type="text" name="address" class="textfield" />
+          </label>
+          <label class="form-label">
+              <label  for="autoSizingSelect">Платформа</label>
+              <select name="platform" class="choose_platform" >
+                
+              </select>
+            </label>
+            <label class="form-label">
+              <span class="form-label">id Телеграм чата объекта</span>
+              <input type="text" name="telegram_object_chat_id" class="textfield" />
+            </label>
+            <label class="form-label">
+              <span class="form-label">Cсылка на Телеграм чата объекта</span>
+              <input type="text" name="telegram_object_chat_link" class="textfield" />
+            </label>
+  
+          
+          <button type="submit" class="button instance-button call-dialog-button">
+            Добавить объект
+          </button>
+        </form>
+      </template>
+
+      <template class="edit-object-form">
+        <form class="form edit-form-object">
+            <label class="form-label">
+              <span class="form-label">Название объекта</span>
+              <input type="text" name="title" class="textfield" />
+            </label>
+            <label class="form-label">
+                <label  for="autoSizingSelect">Менеджер</label>
+                <select name="manager_id" class="choose_manager" >
+                  <option selected class="">Инженер</option>
+                  
+                </select>
+              </label>
+            <label class="form-label">
+              <span class="form-label">Адрес</span>
+              <input type="text" name="address" class="textfield" />
+            </label>
+            <label class="form-label">
+                <label  for="autoSizingSelect">Платформа</label>
+                <select name="platform" class="choose_platform" >
+                  
+                </select>
+              </label>
+              <label class="form-label">
+                <span class="form-label">id Телеграм чата объекта</span>
+                <input type="text" name="telegram_object_chat_id" class="textfield" />
+              </label>
+              <label class="form-label">
+                <span class="form-label">Cсылка на Телеграм чата объекта</span>
+                <input type="text" name="telegram_object_chat_link" class="textfield" />
+              </label>            
+            <button type="submit" class="button instance-button call-dialog-button">
+              Добавить объект
+            </button>
+          </form>
+        </template>
+    <script src="../scripts/dialogs.js" type="module"></script>
+    <script src="../scripts/login.js" type="module"></script>
+    <script src="../scripts/script.js" type="module"></script>
+  </body>
+</html>
