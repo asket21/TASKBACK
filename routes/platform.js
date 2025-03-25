@@ -6,4 +6,6 @@ const platformControlerController = require('../controllers/platformControlerCon
 
 router.get("/platform", platformControlerController.getAllPlatform);
 router.post("/platform", platformControlerController.createPlatform);
+router.get("/platform/:id", platformControlerController.getPlatformById);
+
 module.exports = router;

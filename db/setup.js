@@ -45,11 +45,12 @@ async function createTables(sequelize) {
         
         CREATE TABLE IF NOT EXISTS tasks (
 
-            id INTEGER PRIMARY KEY,       
+            id INTEGER PRIMARY KEY,
+            number INT UNIQUE NOT NULL,      
             object_id INT REFERENCES objects(id) ON DELETE CASCADE NOT NULL,            
             link TEXT NOT NULL,
             manager_id INT REFERENCES users(id) NOT NULL,
-            comment TEXT NOT NULL,
+            comment TEXT ,
             status VARCHAR(20) NOT NULL DEFAULT 'Принято',
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     )

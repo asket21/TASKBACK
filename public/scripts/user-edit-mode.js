@@ -54,7 +54,7 @@ const useEditableUserElementsState = (userId) => {
   return targetElementsState;
 };
 
-export const fillUsersStateFromPage = (userId) => {
+const fillUsersStateFromPage = (userId) => {
   const targetElementsState = useEditableUserElementsState(userId);
   const { setCurrentUserState } = useUserState();
   setCurrentUserState(
@@ -172,6 +172,7 @@ const setCloseButtonStyleAndListeners = (userId, state) => {
   }
 };
 
+
 export const changeUserEditMode = (userId, state) => {
   const targetElementsState = useEditableUserElementsState(userId);
   const { setUsersEditModeOn } = useUserState();
@@ -193,8 +194,6 @@ export const changeUserEditMode = (userId, state) => {
 export const addSelectListeners = (userId) => {
   const select = document.querySelector(`#user-role-${userId}`);
   if (select) {
-    // Удаляем предыдущий обработчик во избежание дублирования
-    // select.removeEventListener('change', handleSelectChange); 
     select.addEventListener('change', (e) => {
       const { setCurrentUserState } = useUserState();
       setCurrentUserState("role", e.target.value);
@@ -202,23 +201,23 @@ export const addSelectListeners = (userId) => {
   }
 };
 
-// const handleSelectChange = (userId, event) => {
-//   const { setCurrentUserState } = useUserState();
-//   setCurrentUserState("role", {
-//     value: event.target.value,
-//     options: Array.from(event.target.options).map(opt => ({
-//       value: opt.value,
-//       text: opt.textContent,
-//       selected: opt.selected
-//     })),
-//     disabled: false
-//   });
+const handleSelectChange = (userId, event) => {
+  const { setCurrentUserState } = useUserState();
+  setCurrentUserState("role", {
+    value: event.target.value,
+    options: Array.from(event.target.options).map(opt => ({
+      value: opt.value,
+      text: opt.textContent,
+      selected: opt.selected
+    })),
+    disabled: false
+  });
 
-//   const select = document.querySelector(`#user-role-${userId}`);
-//   if (select) {
-//     select.addEventListener('change', (e) => handleSelectChange(userId, e));
-//   }
-// };
+  const select = document.querySelector(`#user-role-${userId}`);
+  if (select) {
+    select.addEventListener('change', (e) => handleSelectChange(userId, e));
+  }
+};
 
 
 const handleButtonClick = (event) => {

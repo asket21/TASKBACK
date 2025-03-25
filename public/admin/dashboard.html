@@ -79,7 +79,7 @@
           <path d="M7 10l5 5 5-5z"/>
         </svg>
         <span>Задачи</span>
-        <button
+        <button data-dialog-type="task"
           class="button instance-button add-task-button call-dialog-button"
         >
           Добавить задачу
@@ -103,12 +103,12 @@
 <!-- Темплейты  -->
 <template class="object-about-item">
  
-    <article class="object-card">
+    <article class="object-card-about">
       <button class="button instance-button close-item">Закрыть</button>
         <div class="description">
          <label class="form-label">
           <span class="form-label-text">Название объекта</span>
-        <h3 class="name"></h3>
+        <h3 class="title"></h3>
       </label>
       <label class="form-label">
           <label  for="autoSizingSelect">Менеджер</label>
@@ -134,11 +134,18 @@
           <span class="form-label">Cсылка на Телеграм чата объекта</span>
           <p class="telegram_object_chat_link"></p>
         </label>
-        <button 
-        class="button instance-button edit-about-object-button call-dialog-button"
-        data-dialog-type="password">
-          Редактировать
+        <div class="button-container"> <button 
+        class="button instance-button edit-about-object-button"
+        >
+        <span class="edit-about-button-text">Редактировать</span>
         </button>
+        <button 
+        class="button instance-button delete-object-button"
+        data-dialog-type="delete-object-button">
+          Удалить
+        </button> 
+      </div>
+       
       </div>   
     </article>
 
@@ -178,6 +185,7 @@
     </template>
 
 
+    
 <!-- Объекты -->
 
     <template id="objects-list-item">
@@ -226,6 +234,42 @@
         </label>
         <button type="submit" class="button instance-button call-dialog-button">
           Добавить пользователя
+        </button>
+      </form>
+    </template>
+
+    <!-- Форма создания задачи -->
+
+    <template class="add-task-form">
+      <form class="form form-task">
+        <label class="form-label">
+          <span class="form-label">Объект</span>
+          <input type="text" name="title" class="textfield" />
+        </label>
+        <label class="form-label">
+          <span class="form-label">Номер задачи</span>
+          <input type="text" name="number" class="textfield" />
+        </label>
+        <label class="form-label">
+          <span class="form-label">Ссылка</span>
+          <input type="text" name="link" class="textfield" />
+        </label>
+        <label class="form-label">
+          <label  for="autoSizingSelect">Менеджер</label>
+          <select name="manager_id" class="task-manager" >            
+          </select>
+        </label>
+        <label class="form-label">
+          <label  for="autoSizingSelect">Статус</label>
+          <select name="status" class="task-status" >            
+          </select>
+        </label>
+        <label class="form-label">
+          <span class="form-label">Комментарий</span>
+          <input type="text" name="comment" class="textfield" />
+        </label>
+        <button type="submit" class="button instance-button call-dialog-button">
+          Добавить Задачу
         </button>
       </form>
     </template>

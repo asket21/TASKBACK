@@ -25,12 +25,16 @@
   }
   h3 {
     padding: 0 10px;
-    width: 150px;
+
   }
   .object-card h3 {
     padding: 10px;
     width: auto;
 
+  }
+
+  h3 .title {
+    min-width: 300px;
   }
   .objects-list {
     display: grid;

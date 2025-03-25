@@ -1,17 +1,24 @@
-const sequelize = require("../db/db");
-
+const TaskModel = require("../db/models/TaskModel");
 class taskController {
-
-  
   async getAllTasks(req, res) {
     try {
-      const task = await sequelize.query(`SELECT * FROM tasks`);
-      res.json(task.rows);
+      const searchQuery = req.query.q?.toLowerCase() || "";
+      const tasks = await TaskModel.filterTasks(searchQuery);
+      res.json(tasks);
     } catch (error) {
       console.log(error);
     }
   }
 
+  async getAllUsers(req, res) {
+    try {
+      const searchQuery = req.query.q?.toLowerCase() || "";
+      const users = await UserModel.filterUsers(searchQuery);
+      res.json(users);
+    } catch (error) {
+      console.log(error);
+    }
+  }
   async getTask(req, res) {
     const id = parseInt(req.params.id, 10);
     try {

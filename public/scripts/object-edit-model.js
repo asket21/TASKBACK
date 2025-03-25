@@ -1,240 +1,380 @@
-// import { addPutObjectListeners, removePutObjectListeners } from "./requests.js";
+import { addPutObjectListeners, removePutObjectListeners } from "./requests.js";
 
-// export const objectCurrentState = {
-//   name: "",
-//   login: "",
-//   role: "",
-// };
+export const objectCurrentState = {
+  title: "",
+  address: "",
+  manager_id: "",
+  telegram_object_chat_id: "",
+  telegram_object_chat_link: "",
+  platform: "",
+};
 
+export let objectsEditModeOn = false;
 
+const useObjectState = () => {
+  function setCurrentObjectState(key, value) {
+    objectCurrentState[key] = value;
+  }
+  function setObjectsEditModeOn(state) {
+    objectsEditModeOn = state;
+  }
+  return { setCurrentObjectState, setObjectsEditModeOn };
+};
 
-// export let objectsEditModeOn = false;
+const useEditableObjectElementsState = (objectId) => {
+ 
+  const managerSelect = document.querySelector(
+    `#object-about-manager-id${objectId}`
+  );
+  
+  if (managerSelect) {
+    managerSelect.disabled = true;
+  }
+  const platformSelect = document.querySelector(
+    `#object-about-choose-platform-id${objectId}`
+  );
+  if (platformSelect) {
+    platformSelect.disabled = true;
+  }
+  const targetElementsState = [
+    {
+      name: "title",
+      element: document.querySelector(`#object-${objectId} .title`),
+      canEditText: true,
+      canSetTransparency: true,
+      canSetVisibility: false,
+    },
+    {
+      name: "address",
+      element: document.querySelector(`#object-${objectId} .address`),
+      canEditText: true,
+      canSetTransparency: true,
+      canSetVisibility: false,
+    },
+    {
+      name: "manager_id",
+      element: managerSelect,
+      canEditText: false,
+      canSetTransparency: true,
+      canSetVisibility: false,
+      value: managerSelect ? managerSelect.value : "", // Текущее значениe
+      disabled: true, // Доступность
+    },
+    {
+      name: "platform",
+      element: platformSelect,
+      canEditText: false,
+      canSetTransparency: true,
+      canSetVisibility: false,
+      value: platformSelect ? platformSelect.value : "", // Текущее значениe
+      disabled: true, // Доступность
+    },
+    {
+      name: "telegram_object_chat_id",
+      element: document.querySelector(
+        `#object-${objectId} .telegram_object_chat_id`
+      ),
+      canEditText: true,
+      canSetTransparency: true,
+      canSetVisibility: false,
+    },
+    {
+      name: "telegram_object_chat_link",
+      element: document.querySelector(
+        `#object-${objectId} .telegram_object_chat_link`
+      ),
+      canEditText: true,
+      canSetTransparency: true,
+      canSetVisibility: false,
+    },
+  ];
 
-// const useObjectState = () => {
-//   function setCurrentObjectState(key, value) {
-//     objectCurrentState[key] = value;
-//   }
-//   function setObjectsEditModeOn(state) {
-//     objectsEditModeOn = state;
-//   }
-//   return { setCurrentObjectState, setObjectsEditModeOn };
-// };
+  return targetElementsState;
+};
 
-// const useEditableObjectElementsState = (objectId) => {
-//   const roleSelect = document.querySelector(`#object-role-${objectId}`);
-//   if (roleSelect) {
-//     roleSelect.disabled = true;
-//   }
-//   const targetElementsState = [
-//     {
-//       name: "name",
-//       element: document.querySelector(`#object-${objectId} .name`),
-//       canEditText: true,
-//       canSetTransparency: true,
-//       canSetVisibility: false,
-//     },
-//     {
-//       name: "login",
-//       element: document.querySelector(`#object-${objectId} .login`),
-//       canEditText: true,
-//       canSetTransparency: true,
-//       canSetVisibility: false,
-//     },
-//     {
-//       name: "role",
-//       element: roleSelect,
-//       canEditText: false,
-//       canSetTransparency: true,
-//       canSetVisibility: false,
-//       value: roleSelect ? roleSelect.value : "", // Текущее значениe
-//       disabled: true, // Доступность
-//     },
-//   ];
+const fillObjectsStateFromPage = (objectId) => {
+  const targetElementsState = useEditableObjectElementsState(objectId);
+  const { setCurrentObjectState } = useObjectState();
+  setCurrentObjectState(
+    "title",
+    targetElementsState.find((item) => item.name === "title").element
+      .textContent
+  );
+  setCurrentObjectState(
+    "address",
+    targetElementsState.find((item) => item.name === "address").element
+      .textContent
+  );
+  setCurrentObjectState(
+    "telegram_object_chat_id",
+    targetElementsState.find((item) => item.name === "telegram_object_chat_id")
+      .element.textContent
+  );
+  setCurrentObjectState(
+    "telegram_object_chat_link",
+    targetElementsState.find(
+      (item) => item.name === "telegram_object_chat_link"
+    ).element.textContent
+  );
 
-//   return targetElementsState;
-// };
+  const chooseManagerElement = targetElementsState.find(
+    (item) => item.name === "manager_id"
+  ).element;
+  setCurrentObjectState("manager_id", chooseManagerElement.value);
+  const choosePlatformElement = targetElementsState.find(
+    (item) => item.name === "platform"
+  ).element;
+  setCurrentObjectState("platform", choosePlatformElement.value);
+};
 
-// export const fillObjectsStateFromPage = (objectId) => {
-//   const targetElementsState = useEditableObjectElementsState(objectId);
-//   const { setCurrentObjectState } = useObjectState();
-//   setCurrentObjectState(
-//     "name",
-//     targetElementsState.find((item) => item.name === "name").element.textContent
-//   );
-//   setCurrentObjectState(
-//     "login",
-//     targetElementsState.find((item) => item.name === "login").element
-//       .textContent
-//   );
+export const fillObjectsStateFromForm = (objectId) => {
+  const targetElementsState = useEditableObjectElementsState(objectId);
+  const { setCurrentObjectState } = useObjectState();
+  setCurrentObjectState(
+    "title",
+    targetElementsState.find((item) => item.name === "title").element
+      .textContent
+  );
+  setCurrentObjectState(
+    "address",
+    targetElementsState.find((item) => item.name === "address").element
+      .textContent
+  );
+  setCurrentObjectState(
+    "telegram_object_chat_id",
+    targetElementsState.find((item) => item.name === "telegram_object_chat_id")
+      .element.textContent
+  );
+  setCurrentObjectState(
+    "telegram_object_chat_link",
+    targetElementsState.find(
+      (item) => item.name === "telegram_object_chat_link"
+    ).element.textContent
+  );
 
-//   const roleElement = targetElementsState.find(item => item.name === "role").element;
-//   setCurrentObjectState("role", roleElement.value);
-//   }
+  const chooseManagerElement = targetElementsState.find(
+    (item) => item.name === "manager_id"
+  ).element;
+  setCurrentObjectState("manager_id", chooseManagerElement.value);
+  const choosePlatformElement = targetElementsState.find(
+    (item) => item.name === "platform"
+  ).element;
+  setCurrentObjectState("platform", choosePlatformElement.value);
+};
 
+const changeObjectTargetElementsStyle = (objectId, targetElementsState, state) => {
+  if (state) {
+    // Редактирование
+    targetElementsState.forEach((element) => {
+      
+      if (
+        element.name === "manager_id" ||
+        element.name === "platform"
+      ) {
+        // Для select управляем состоянием через disabled
+        element.element.disabled = false;
+        element.element.style.opacity = element.canSetTransparency ? "1" : "1";
+      } else {
+        element.element.contentEditable = element.canEditText;
+        element.element.style.opacity = element.canSetTransparency ? ".5" : "1";
+      }
+    });
+    targetElementsState.find((item) => item.name === "title").element.focus();
+    const objectsCard = document.querySelector(".objects-list-item");     
+    
+    if (objectsCard.id !== `object-${objectId}`) {
+      // objectsCard.style.filter = "blur(10px)";
+      objectsCard.style.pointerEvents = "none";
+    } else {
+      objectsCard.style.transform = "scale(1.1)";
+      objectsCard.style.boxShadow = "0 0 0 10px #333";
+      objectsCard.style.backgroundColor = "white";
+      objectsCard.style.zIndex = "1";
+      objectsCard.style.position = "relative";
+      objectsCard.style.padding = "2em";
+    }
+  } else {
+    // Сохранение
+    targetElementsState.forEach((element) => {
+      if (
+        element.name === "manager_id" ||
+        element.name === "platform"
+      ) {
+        // Для select управляем состоянием через disabled
+        element.element.disabled = true;
+        element.element.style.opacity = element.canSetTransparency ? "1" : "1";
+      } else {
+        element.element.contentEditable = element.canEditText;
+        element.element.style.opacity = element.canSetTransparency ? ".5" : "1";
+      }
+    });
+    const objectsCard = document.querySelector(".objects-list-item");
+    
+    objectsCard.style.filter = "none";
+    objectsCard.style.pointerEvents = "auto";
+    objectsCard.style.transform = "scale(1)";
+    objectsCard.style.boxShadow = "none";
+    objectsCard.style.backgroundColor = "transparent";
+    objectsCard.style.zIndex = "0";
+    objectsCard.style.position = "static";
+    objectsCard.style.padding = "0";
+  }
+};
 
-// export const fillObjectsStateFromForm = (objectId) => {
-//   const targetElementsState = useEditableObjectElementsState(objectId);
-//   const { setCurrentObjectState } = useObjectState();
-//   setCurrentObjectState(
-//     "name",
-//     targetElementsState.find((item) => item.name === "name").element.textContent
-//   );
-//   setCurrentObjectState(
-//     "login",
-//     targetElementsState.find((item) => item.name === "login").element
-//       .textContent
-//   );
-//   const roleElement = targetElementsState.find(item => item.name === "role").element;
-//   setCurrentObjectState("role", roleElement.value);
-// };
+const setButtonStyle = (objectId, state) => {
+  if (state) {
+    document.querySelector(
+      `#object-${objectId} .edit-about-object-button .edit-about-button-text`
+    ).textContent = "Сохранить";
+  } else {
+    document.querySelector(
+      `#object-${objectId} .edit-about-object-button .edit-about-button-text`
+    ).textContent = "Редактировать";
+  }
+};
 
-// const changeTargetElementsStyle = (objectId, targetElementsState, state) => {
-//   if (state) {  // Редактирование
-//     targetElementsState.forEach((element) => {
-//       if (element.name === "role") {
-//         // Для select управляем состоянием через disabled
-//         element.element.disabled = false ; 
-//         element.element.style.opacity = element.canSetTransparency ? "1" : "1";
-//       } else {
-//         element.element.contentEditable = element.canEditText;
-//         element.element.style.opacity = element.canSetTransparency ? ".5" : "1";
-//       }
-//     });
-//     targetElementsState.find((item) => item.name === "name").element.focus();
-//     const objectsCards = [...document.querySelectorAll(".object-list-item")];
-//     // const selectStatus = document.querySelector(`object-role-${objectId}`);
-//     // console.log(selectStatus)
+const setCloseButtonStyleAndListeners = (objectId, state) => {
+  if (state) {
+    const handleCloseButtonClick = () => {
+      changeObjectEditMode(objectId, false);
+      document
+        .querySelector(`#object-${objectId} .close-item`)
+        .removeEventListener("click", handleCloseButtonClick);
+      removePutObjectListeners();
+      // addObjectsEditModeListeners();
+      document
+        .querySelector(`#object-${objectId} .close-item`)
+        .removeAttribute("style");
+    };
+    document.querySelector(`#object-${objectId} .close-item`).style.display =
+      "block";
+    document
+      .querySelector(`#object-${objectId} .close-item`)
+      .addEventListener("click", handleCloseButtonClick);
+  }
+};
 
-//     objectsCards.forEach((card) => {
-//       if (card.id !== `object-${objectId}`) {
-//         card.style.filter = "blur(10px)";
-//         card.style.pointerEvents = "none";
-//       } else {
-//         card.style.transform = "scale(1.1)";
-//         card.style.boxShadow = "0 0 0 10px #333";
-//         card.style.backgroundColor = "white";
-//         card.style.zIndex = "1";
-//         card.style.position = "relative";
-//         card.style.padding = "2em";
-//       }
-//     });
-//   } else {// Сохранение 
-//     const selectStatus = document.querySelector(`#object-role-${objectId}`);
-//     selectStatus.disabled = true; 
-//     targetElementsState.forEach((element) => {
-//       element.element.contentEditable = !element.canEditText;
-//       element.element.style.opacity = !element.canSetTransparency ? ".5" : "1";
-//     });
-//     const objectsCards = [...document.querySelectorAll(".object-list-item")];
-//     objectsCards.forEach((card) => {
-//       card.style.filter = "none";
-//       card.style.pointerEvents = "auto";
-//       card.style.transform = "scale(1)";
-//       card.style.boxShadow = "none";
-//       card.style.backgroundColor = "transparent";
-//       card.style.zIndex = "0";
-//       card.style.position = "static";
-//       card.style.padding = "0";
-//     });
-//   }
-// };
+export const changeObjectEditMode = (objectId, state) => {
+  const targetElementsState = useEditableObjectElementsState(objectId);
+  const { setObjectsEditModeOn } = useObjectState();
+  if (state) {
+    addSelectPlatformListeners(objectId);
+    changeObjectTargetElementsStyle(objectId, targetElementsState, true);
+    setButtonStyle(objectId, true);
+    setCloseButtonStyleAndListeners(objectId, true);
+    setObjectsEditModeOn(true);
+  } else {
+    addSelectPlatformListeners(objectId)
+    changeObjectTargetElementsStyle(objectId, targetElementsState, false);
+    setButtonStyle(objectId, false);
+    setCloseButtonStyleAndListeners(objectId, false);
+    setObjectsEditModeOn(false);
+  }
+};
 
-// const setButtonStyle = (objectId, state) => {
-//   if (state) {
-//     document.querySelector(
-//       `#object-${objectId} .edit-object-button .edit-button-text`
-//     ).textContent = "Сохранить";
-//   } else {
-//     document.querySelector(
-//       `#object-${objectId} .edit-object-button .edit-button-text`
-//     ).textContent = "Редактировать";
-//   }
-// };
+export const addSelectPlatformListeners = (objectId) => {
+  const select = document.querySelector(
+    `#object-about-manager-id${objectId}`
+  );
+  if (select) {
+    select.addEventListener("change", (e) => {
+      const { setCurrentObjectState } = useObjectState();
+      setCurrentObjectState("platform", e.target.value);
+    });
+  }
+};
+export const addSelectManagerListeners = (objectId) => {
+  const select = document.querySelector(
+    `#object-about-manager-id${objectId}`
+  );
+  const secondSelect = document.querySelector(
+    `object-about-choose-platform-id${objectId}`
+  );
+  if (select) {
+    select.addEventListener("change", (e) => {
+      const { setCurrentObjectState } = useObjectState();
+      setCurrentObjectState("manager_id", e.target.value);
+    });
+  }
+  if (secondSelect) {
+    secondSelect.addEventListener("change", (e) => {
+      const { setCurrentObjectState } = useObjectState();
+      setCurrentObjectState("platform", e.target.value);
+    });
+  }
+};
 
-// const setCloseButtonStyleAndListeners = (objectId, state) => {
-//   if (state) {
-//     const handleCloseButtonClick = () => {
-//       changeObjectEditMode(objectId, false);
-//       document
-//         .querySelector(`#object-${objectId} .close-item`)
-//         .removeEventListener("click", handleCloseButtonClick);
-//       removePutObjectListeners();
-//       addObjectsEditModeListeners();
-//       document
-//         .querySelector(`#object-${objectId} .close-item`)
-//         .removeAttribute("style");
-//     };
-//     document.querySelector(`#object-${objectId} .close-item`).style.display =
-//       "block";
-//     document
-//       .querySelector(`#object-${objectId} .close-item`)
-//       .addEventListener("click", handleCloseButtonClick);
-//   }
-// };
+const handleObjectSelectChange = (userId, event) => {
+  const { setCurrentObjectState } = useUserState();
+  setCurrentObjectState("manager_id", {
+    value: event.target.value,
+    options: Array.from(event.target.options).map((opt) => ({
+      value: opt.value,
+      text: opt.textContent,
+      selected: opt.selected,
+    })),
+    disabled: false,
+  });
+  setCurrentObjectState("plaform", {
+    value: event.target.value,
+    options: Array.from(event.target.options).map((opt) => ({
+      value: opt.value,
+      text: opt.textContent,
+      selected: opt.selected,
+    })),
+    disabled: false,
+  });
+  const secondSelect = document.querySelector(
+    `object-about-choose-platform-id${object.id}`
+  );
+  const select = document.querySelector(
+    `#object-about-manager-id:${object.id}`
+  );
+  if (select) {
+    select.addEventListener("change", (e) =>
+      handleObjectSelectChange(userId, e)
+    );
+  }
+  if (secondSelect) {
+    secondSelect.addEventListener("change", (e) =>
+      handleObjectSelectChange(userId, e)
+    );
+  }
+};
 
-// export const changeObjectEditMode = (objectId, state) => {
-//   const targetElementsState = useEditableObjectElementsState(objectId);
-//   const { setObjectsEditModeOn } = useObjectState();
-//   if (state) {
-//     addSelectListeners(objectId);
-//     changeTargetElementsStyle(objectId, targetElementsState, true);
-//     setButtonStyle(objectId, true);
-//     setCloseButtonStyleAndListeners(objectId, true);
-//     setObjectsEditModeOn(true);
-//   } else {
-//     changeTargetElementsStyle(objectId, targetElementsState, false);
-//     setButtonStyle(objectId, false);
-//     setCloseButtonStyleAndListeners(objectId, false);
-//     setObjectsEditModeOn(false);
-//   }
-// };
+const handleButtonClick = (event) => {
+  const objectId = event.currentTarget.dataset.id;
+  // console.log("Начало редактирования объекта ID:", objectId);
+  fillObjectsStateFromPage(objectId);
+  changeObjectEditMode(objectId,true)
+  
 
+  try {
 
-// export const addSelectListeners = (objectId) => {
-//   const select = document.querySelector(`#object-role-${objectId}`);
-//   if (select) {
-//     // Удаляем предыдущий обработчик во избежание дублирования
-//     // select.removeEventListener('change', handleSelectChange); 
-//     select.addEventListener('change', (e) => {
-//       const { setCurrentObjectState } = useObjectState();
-//       setCurrentObjectState("role", e.target.value);
-//     });
-//   }
-// };
+    const editButtons = document.querySelectorAll(".edit-about-object-button");
+    editButtons.forEach(button => {
+      button.removeEventListener("click", handleButtonClick);
+    });
+    
+    fillObjectsStateFromPage(objectId);
+    changeObjectEditMode(objectId, true);
+    addPutObjectListeners();
+  } catch (error) {
+    console.error("Ошибка при обработке клика:", error);
+  }
+};
 
-// // const handleSelectChange = (objectId, event) => {
-// //   const { setCurrentObjectState } = useObjectState();
-// //   setCurrentObjectState("role", {
-// //     value: event.target.value,
-// //     options: Array.from(event.target.options).map(opt => ({
-// //       value: opt.value,
-// //       text: opt.textContent,
-// //       selected: opt.selected
-// //     })),
-// //     disabled: false
-// //   });
+export const addObjectsEditModeListeners = () => {
+  const objectEditButtons = document.querySelectorAll(
+    ".edit-about-object-button"
+  );
+  if (!objectEditButtons.length) {
+    console.warn("Кнопки редактирования не найдены");
+    return;
+  }
 
-// //   const select = document.querySelector(`#object-role-${objectId}`);
-// //   if (select) {
-// //     select.addEventListener('change', (e) => handleSelectChange(objectId, e));
-// //   }
-// // };
-
-
-// const handleButtonClick = (event) => {
-//   const objectId = event.currentTarget.dataset.id;
-//   fillObjectsStateFromPage(objectId);
-//   changeObjectEditMode(objectId, true);
-//   const objectEditButton = document.querySelectorAll(".edit-object-button");
-//   objectEditButton.forEach((button) => {
-//     button.removeEventListener("click", handleButtonClick);
-//   });
-//   addPutObjectListeners();
-// };
-
-// export const addObjectsEditModeListeners = () => {  
-//   const objectEditButton = document.querySelectorAll(".edit-object-button");
-//   objectEditButton.forEach((button) => {
-//     button.addEventListener("click", handleButtonClick);
-//   });
-// };
+  objectEditButtons.forEach((button) => {
+    button.addEventListener("click",  handleButtonClick);
+    console.log("Обработчик добавлен для:", button);
+  });
+};

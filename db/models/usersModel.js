@@ -1,7 +1,7 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../db");
 const bcrypt = require("bcrypt");
-const { Op } = require('sequelize');
+const { Op } = require("sequelize");
 const UserModel = sequelize.define(
   "UserModel",
   {
@@ -60,25 +60,22 @@ UserModel.filterUsers = function (searchQuery) {
       ],
     },
     attributes: {
-      exclude: ['password']
-    }
+      exclude: ["password"],
+    },
   });
-
 };
 
 UserModel.findByRole = function (role) {
-  return UserModel.findAll({ where: { role: role },
+  return UserModel.findAll({
+    where: { role: role },
     attributes: {
-    exclude: ['password']
-  } },    
-  );
+      exclude: ["password"],
+    },
+  });
 };
 
 UserModel.prototype.isValidPassword = function (password) {
   return bcrypt.compareSync(password, this.password);
 };
-
-
-
 
 module.exports = UserModel;

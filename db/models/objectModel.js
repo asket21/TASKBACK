@@ -1,8 +1,8 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../db");
-const { Op } = require('sequelize');
-const objectModel = sequelize.define(
-  "objectModel",
+const { Op } = require("sequelize");
+const ObjectModel = sequelize.define(
+  "ObjectModel",
   {
     id: {
       type: DataTypes.INTEGER,
@@ -60,8 +60,8 @@ const objectModel = sequelize.define(
   }
 );
 
-objectModel.filterObjects = function (searchQuery) {
-  return objectModel.findAll({
+ObjectModel.filterObjects = function (searchQuery) {
+  return ObjectModel.findAll({
     where: {
       [Op.or]: [
         { title: { [Op.iLike]: `%${searchQuery}%` } }, // Регистронезависимый поиск
@@ -71,17 +71,17 @@ objectModel.filterObjects = function (searchQuery) {
   });
 };
 
-objectModel.associate = (models) => {
-  objectModel.belongsTo(models.User, {
+ObjectModel.associate = (models) => {
+  ObjectModel.belongsTo(models.User, {
     foreignKey: "manager_id",
     as: "managerinfo",
   });
 
-  objectModel.belongsTo(models.Platform, {
+  ObjectModel.belongsTo(models.Platform, {
     foreignKey: "platform",
     targetKey: "id",
     as: "platformInfo",
   });
 };
 
-module.exports = objectModel;
+module.exports = ObjectModel;

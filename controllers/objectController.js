@@ -1,13 +1,11 @@
-const sequelize = require("../db/db");
-
-const objectModel = require("../db/models/objectModel");
+const ObjectModel = require("../db/models/ObjectModel");
 
 class ObjectController {
   async getAllObjects(req, res) {
     try {
       const searchQuery = req.query.q?.toLowerCase() || "";
-      const objects = await objectModel.filterObjects(searchQuery);
-      console.log(searchQuery)
+      const objects = await ObjectModel.filterObjects(searchQuery);
+      console.log(searchQuery);
       res.json(objects);
     } catch (error) {
       res.status(500).send("Ошибка поиска объектов");
@@ -17,8 +15,8 @@ class ObjectController {
   async getObject(req, res) {
     const id = parseInt(req.params.id, 10);
     try {
-      const object = await objectModel.findByPk(id);
-       console.log(object)
+      const object = await ObjectModel.findByPk(id);
+      console.log(object);
       res.json(object);
     } catch (error) {
       console.log(error);
@@ -32,20 +30,20 @@ class ObjectController {
       if (!Array.isArray(objects)) {
         try {
           const { title, manager_id, address, platform, id } = req.body;
-          const existingObject = await objectModel.findOne({
+          const existingObject = await ObjectModel.findOne({
             where: { title },
           });
           if (existingObject) {
             return res.status(400).send("Объект существует");
           }
-          const newObject = await objectModel.create({
+          const newObject = await ObjectModel.create({
             title,
             manager_id,
             address,
             platform,
             id,
           });
-          console.log(newObject.id)
+          console.log(newObject.id);
           res.send("Объект создан! ID: " + newObject.title);
         } catch (error) {
           res.status(500).send("Ошибка создания объекта: " + err.message);
@@ -55,13 +53,13 @@ class ObjectController {
       for (const objectData of objects) {
         const { title, manager_id, address, platform, id } = objectData;
 
-        const existingObject = await objectModel.findOne({ where: { title } });
+        const existingObject = await ObjectModel.findOne({ where: { title } });
         if (existingObject) {
           results.push({ id, title, status: "Уже существует" });
           continue;
         }
 
-        const newObject = await objectModel.create({
+        const newObject = await ObjectModel.create({
           title,
           manager_id,
           address,
@@ -78,14 +76,13 @@ class ObjectController {
 
   async updateObject(req, res) {
     const id = parseInt(req.params.id, 10);
-    const { title, address, manager_id } = req.body;
+    const updatedData = req.body;
 
     try {
-      const object = await sequelize.query(
-        `UPDATE objects SET title = $1, address =$2 manager_id =$3 WHERE id =$4 RETURNING *`,
-        [title, address, manager_id, id]
-      );
-      res.json(object.rows);
+      const object = await ObjectModel.update(updatedData, {
+        where: { id },
+      });
+      res.status(200).json({ message: "Объект отредактирован!" });
     } catch (error) {
       console.log(error);
     }

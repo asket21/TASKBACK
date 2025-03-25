@@ -8,10 +8,18 @@ import {
   fillUsersStateFromForm,
   addUsersEditModeListeners
 } from "./user-edit-mode.js";
+
 import { appendPasswordForm,appendAboutObject } from "./forms.js";
+
 let currentUserId = null;
 let currentObjectId = null
+import {
+  objectCurrentState,
+  changeObjectEditMode,
+  fillObjectsStateFromForm,
+  // addObjectsEditModeListeners
 
+} from "./object-edit-model.js"
 
 
 const prepareFormData = (form) => {
@@ -80,21 +88,44 @@ const getObjectByID = async (id) => {
   }
 };
 
+
+const getUserById = async (id) => {
+  try {
+
+    const response = await getData(`/api/user/${id}`);
+    return response;
+  } catch (error) {
+    showTooltip(error.message);
+    return [];
+  }
+};
+
+const getPlatformById = async (id) => {
+  try {
+
+    const response = await getData(`/api/platform/${id}`);
+    return response;
+  } catch (error) {
+    showTooltip(error.message);
+    return [];
+  }
+};
+
+
 const addAboutObjectListeners = async() => {
   // Делегирование событий для кнопок
   document.addEventListener("click", async (event) => {
     const btn = event.target.closest(".about_object-button");
     if (!btn) return;
-
     const currentObjectId = btn.dataset.id;
-    console.log(currentObjectId)
     const currentObject = await getObjectByID(currentObjectId)
-    console.log(currentObject)
     appendAboutObject(currentObject);
+
     openDialog();
+    
   });
   const formContainer = document.querySelector(".form-container");
-  formContainer.addEventListener("submit", handlePasswordUsersSubmit);
+  formContainer.addEventListener("submit", handleAddObjectsSubmit);
 };
 
 
@@ -232,13 +263,7 @@ const addDeleteUsersListeners = async () => {
   });
 };
 
-//Редактирование пользователя
-const removePutUserListeners = () => {
-  const putButtons = document.querySelectorAll(".edit-user-button");
-  putButtons.forEach((button) => {
-    button.removeEventListener("click", sendUserUpdateAndTurnOffEditMode);
-  });
-};
+// Редактирование пользователя
 
 const putUser = async (id) => {
   try {
@@ -259,9 +284,17 @@ const addPutUserListeners = async () => {
   });
 };
 
+const removePutUserListeners = () => {
+  const putButtons = document.querySelectorAll(".edit-user-button");
+  putButtons.forEach((button) => {
+    button.removeEventListener("click", sendUserUpdateAndTurnOffEditMode);
+  });
+};
+
+
 const sendUserUpdateAndTurnOffEditMode = async (event) => {
   event.preventDefault();
-  console.log(event.currentTarget.dataset.id);
+  
   const id = event.currentTarget.dataset.id;
   fillUsersStateFromForm(id);
   const res = await putUser(id);
@@ -272,20 +305,94 @@ const sendUserUpdateAndTurnOffEditMode = async (event) => {
     changeUserEditMode(id, false);
   }
 };
+// Редактирование объекта 
+
+const putObject = async (id) => {
+  try {
+    const response = await putData(`/api/object/${id}`, objectCurrentState);
+    if (response instanceof Error) {
+      throw new Error(response.message);
+    }
+    return response;
+  } catch (error) {
+    showTooltip(error.message);
+    return false;
+  }
+};
+
+
+const addPutObjectListeners = async () => {
+  const putButtons = document.querySelectorAll(".edit-about-object-button");
+  putButtons.forEach((button) => {
+    button.addEventListener("click", sendObjectUpdateAndTurnOffEditMode);
+  });
+};
+
+const removePutObjectListeners = () => {
+  const putButtons = document.querySelectorAll(".edit-about-object-button");
+  putButtons.forEach((button) => {
+    button.removeEventListener("click", sendObjectUpdateAndTurnOffEditMode);
+  });
+};
+
+const sendObjectUpdateAndTurnOffEditMode = async (event) => {
+  event.preventDefault();
+  
+  const id = event.currentTarget.dataset.id;
+  fillObjectsStateFromForm(id);//+
+  const res = await putObject(id);
+  if (res) {
+    reload("object");//+
+    changeObjectEditMode(id, false);
+    closeDialog()
+  }
+};
+
+
+
+// Задачи 
+
+
+
+const addTaskFormListeners = async () => {
+  const postButton = document.querySelector(".add-task-button");
+  postButton.addEventListener("click", () => {
+    const form = document.querySelector(".form-task");
+    form.addEventListener("submit", handleAddUsersSubmit);
+  });
+};
+
+
+
+
+const removeTaskFormListeners = () => {
+  const form = document.querySelector(".add-task-form");
+  if (form) {
+    form.removeEventListener("submit", handlePasswordUsersSubmit);
+  }
+};
+
 
 export {
   addUserFormListeners,
   addPasswordFormListeners,
   addDeleteUsersListeners,
   removeUserFormListeners,
+  addPutObjectListeners,
   addPutUserListeners,
   addObjectFormListeners,
   addAboutObjectListeners,
   removeObjectFormListeners,
   removePutUserListeners,
+  removePutObjectListeners,
   removePasswordFormListeners,
   currentUserId,
+  currentObjectId,
   getUserByRole,
   getAllPlatform,
-  getObjectByID
+  getObjectByID,
+  getUserById,
+  getPlatformById,
+  removeTaskFormListeners,
+  addTaskFormListeners
 };

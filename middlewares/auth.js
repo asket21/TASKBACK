@@ -1,6 +1,3 @@
-
-
-
 const checkAuth = (req, res, next) => {
     if (!req.session.userId) {
       console.log('Попытка неавторизованного запроса')

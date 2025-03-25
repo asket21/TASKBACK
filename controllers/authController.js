@@ -1,20 +1,20 @@
-const userModel = require("../db/models/usersModel");
+const UserModel = require("../db/models/usersModel");
 const path = require("path");
 const bcrypt = require("bcrypt");
 
 const authUser = async (req, res) => {
   try {
     const { login, password } = req.body;
-    if (!login | !password){
+    if (!login | !password) {
       res.status(401).send({ message: "Поля не могут быть пустыми" });
       return res.redirect("/index.html");
     }
-    const user = await userModel.findOne({ where: { login } });
+    const user = await UserModel.findOne({ where: { login } });
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
       res.status(401).send({ message: "Неверный логин или пароль" });
       return res.redirect("/index.html");
-    } 
+    }
 
     // Сохранение пользователя в сессии
     req.session.userId = user.id;
@@ -23,19 +23,14 @@ const authUser = async (req, res) => {
       success: true,
       redirectUrl: "/admin/dashboard",
     });
-  
-
   } catch (err) {
-// Отладить обработчик
+    // Отладить обработчик
     // res.status(500).json({
     //   success: false,
     //   message: "Ошибка входа: " + err.message,
     // });
-
   }
 };
-
-
 
 const sendIndex = (req, res) => {
   if (req.session.userId) {

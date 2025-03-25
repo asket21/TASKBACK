@@ -1,7 +1,8 @@
 import { getData } from "./api-utils.js";
 import { renderUsersList,renderObjectList } from "./dom-creators.js";
-import { addUserFormListeners,addDeleteUsersListeners,addPasswordFormListeners,addObjectFormListeners,addAboutObjectListeners } from "./requests.js";
+import { addUserFormListeners,addDeleteUsersListeners,addPasswordFormListeners,addObjectFormListeners,addAboutObjectListeners,addTaskFormListeners } from "./requests.js";
 import { addUsersEditModeListeners } from "./user-edit-mode.js";
+// import {addObjectsEditModeListeners} from "./object-edit-model.js"
 import {showTooltip} from "./dom-creators.js"
 
 export async function reload(blockName) {
@@ -10,7 +11,12 @@ export async function reload(blockName) {
     case "users":
       loadUsersBlock();
       break;
-
+      // case "object":
+      //   loadObjectBlock();
+      //   break;
+      // case "task":
+      //   loadTaskBlock();
+      //   break;
     default:
       console.log("Unknown block name");
       break;
@@ -19,6 +25,17 @@ export async function reload(blockName) {
 
 export let usersState = [];
 export let objectsState = [];
+export let tasksState = [];
+
+const userSearchInput = document.querySelector('.user-search');
+let userSearchTimeout;
+
+userSearchInput.addEventListener('input', (e) => {
+  clearTimeout(userSearchInput);
+  userSearchTimeout = setTimeout(() => {
+    loadUsersBlock(e.target.value);
+  }, 300);
+});
 
 document.querySelectorAll('.section-title').forEach(title => {
   title.addEventListener('click', (e) => {
@@ -46,17 +63,6 @@ document.querySelectorAll('.section-title').forEach(title => {
   });
 });
 
-
-const userSearchInput = document.querySelector('.user-search');
-let userSearchTimeout;
-
-userSearchInput.addEventListener('input', (e) => {
-  clearTimeout(userSearchInput);
-  userSearchTimeout = setTimeout(() => {
-    loadUsersBlock(e.target.value);
-  }, 300);
-});
-
 const objectSearchInput = document.querySelector('.object-search');
 let objectSearchTimeout;
 
@@ -66,6 +72,18 @@ objectSearchInput.addEventListener('input', (e) => {
     loadObjectBlock(e.target.value);
   }, 300);
 });
+
+
+const taskSearchInput = document.querySelector('.task-search');
+let taskSearchTimeout;
+
+taskSearchInput.addEventListener('input', (e) => {
+  clearTimeout(taskSearchInput);
+  taskSearchTimeout = setTimeout(() => {
+    loadTaskBlock(e.target.value);
+  }, 300);
+});
+
 
 async function loadUsersBlock(searchQuery = '') {
   try {
@@ -84,7 +102,9 @@ async function loadUsersBlock(searchQuery = '') {
     addUsersEditModeListeners();
     await addUserFormListeners();
     await addDeleteUsersListeners();
-    await addPasswordFormListeners()}
+    await addPasswordFormListeners();
+    
+  }
   catch (error){
     console.error('Ошибка:', error);
     showTooltip('Ошибка загрузки данных');
@@ -95,7 +115,7 @@ async function loadObjectBlock(searchQuery = '') {
     const url = `/api/object${searchQuery ? `?q=${encodeURIComponent(searchQuery)}` : ''}`;
 
     objectsState = await getData(url);
-    console.log(objectsState)
+    
     const objectsList = document.querySelector(".objects-list");
     objectsList.innerHTML = "";
 
@@ -103,11 +123,10 @@ async function loadObjectBlock(searchQuery = '') {
       objectsList.textContent = "Объекты не найдены";
       return
     }
-    renderObjectList(objectsState);
-    // addObjectsEditModeListeners();
+    renderObjectList(objectsState);    
     await addObjectFormListeners();
     // await addDeleteObjectsListeners();
-    // await addObjectFormListeners()
+    await addObjectFormListeners()
     await addAboutObjectListeners();
     }
   catch (error){
@@ -116,11 +135,33 @@ async function loadObjectBlock(searchQuery = '') {
   }
 }
   
+async function loadTaskBlock(searchQuery = '') {
+  try {
+    const url = `/api/tasks${searchQuery ? `?q=${encodeURIComponent(searchQuery)}` : ''}`;
 
-  (async function init() {
-    await loadUsersBlock();
-    await loadObjectBlock();
-  })();
+    tasksState = await getData(url);
+    
+    const  tasksList = document.querySelector(".tasks-list");
+    tasksList.innerHTML = "";
+
+    if (tasksState.length === 0) {
+      tasksList.textContent = "Задачи не найдены";
+      return
+    }
+    
+    await addTaskFormListeners()
+    }
+  catch (error){
+    console.error('Ошибка:', error);
+    showTooltip('Ошибка загрузки данных');
+  }
+}
+(async function init() {
+  await loadUsersBlock();
+  await loadObjectBlock();
+  await loadTaskBlock();
+})();
+
 
 
 

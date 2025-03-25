@@ -1,6 +1,5 @@
-import { appendUserForm, appendPasswordForm, appendObjectForm } from "./forms.js";
-import { removeUserFormListeners,removePasswordFormListeners,removeObjectFormListeners } from "./requests.js";
-import {currentUserId} from "./requests.js"
+import { appendUserForm, appendPasswordForm, appendObjectForm,appendTaskForm } from "./forms.js";
+import { removeUserFormListeners,removePasswordFormListeners,removeObjectFormListeners,removeTaskFormListeners } from "./requests.js";
 
 
 const buttons = [...document.querySelectorAll(".call-dialog-button")];
@@ -28,7 +27,11 @@ export const closeDialog = () => {
             break;
         case "object":
             removeObjectFormListeners();
-            break;   
+            break;
+        case "object":
+            removeTaskFormListeners();
+            break;          
+            
         // Добавьте другие случаи при необходимости
     }
     
@@ -51,6 +54,9 @@ const handleDialogContent = (type) => {
         case "object":
             appendObjectForm();
             break;
+        case "task":
+            appendTaskForm();
+            break;    
         default:
             console.log("Unknown dialog type");
     }

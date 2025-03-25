@@ -1,6 +1,6 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../db');
-
+const { Op } = require('sequelize');
 
 
 const TaskModel = sequelize.define('TaskModel', {
@@ -9,6 +9,11 @@ const TaskModel = sequelize.define('TaskModel', {
         primaryKey: true,
         autoIncrement: true // Добавляем автоинкремент, если это требуется
     },
+    number: {
+        type: DataTypes.INTEGER,
+        unique: true,
+        allowNull: false
+      },
     object_id: {
         type: DataTypes.INTEGER,
         allowNull: false,
@@ -35,9 +40,10 @@ const TaskModel = sequelize.define('TaskModel', {
         allowNull: false
     },
     status: {
-        type: DataTypes.STRING(20),
+         type: DataTypes.ENUM('Принято', 'В работе', 'Завершено'),
+  defaultValue: 'Принято',
         allowNull: false,
-        defaultValue: 'Принято' // Значение по умолчанию
+        defaultValue: 'Принято' 
     },
     created_at: {
         type: DataTypes.DATE,
@@ -48,5 +54,30 @@ const TaskModel = sequelize.define('TaskModel', {
     tableName: 'tasks', // Явное указание имени таблицы
     timestamps: false // Отключаем автоматические поля createdAt и updatedAt
     });
+
+TaskModel.filterTasks = function (searchQuery) {
+  return TaskModel.findAll({
+    where: {
+      [Op.or]: [
+        { name: { [Op.iLike]: `%${searchQuery}%` } }, // Регистронезависимый поиск
+        { login: { [Op.iLike]: `%${searchQuery}%` } },
+      ],
+    },
     
-    module.exports = TaskModel;
+  });
+
+};
+
+TaskModel.associate = (models) => {
+    TaskModel.belongsTo(models.User, {
+      foreignKey: "manager_id",
+      as: "managerinfo",
+    });
+    TaskModel.belongsTo(models.Object, {
+        foreignKey: "object",
+        targetKey: "id",
+        as: "objectInfo",
+      });
+};
+
+module.exports = TaskModel;

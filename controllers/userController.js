@@ -1,11 +1,10 @@
-const userModel = require("../db/models/usersModel");
-const sequelize = require("../db/db");
+const UserModel = require("../db/models/UsersModel");
 
 class UserController {
   async getAllUsers(req, res) {
     try {
       const searchQuery = req.query.q?.toLowerCase() || "";
-      const users = await userModel.filterUsers(searchQuery);
+      const users = await UserModel.filterUsers(searchQuery);
       res.json(users);
     } catch (error) {
       console.log(error);
@@ -16,12 +15,12 @@ class UserController {
     try {
       const { id } = req.params;
       const { password } = req.body;
-      const user = await userModel.findByPk(id);
+      const user = await UserModel.findByPk(id);
       if (!user) {
         return res.status(404).json({ message: "Пользователь не найден" });
       }
 
-      await userModel.update({ password: password }, { where: { id } });
+      await UserModel.update({ password: password }, { where: { id } });
 
       res.status(200).json({ message: "Пароль успешно изменен" });
     } catch (error) {
@@ -35,8 +34,9 @@ class UserController {
 
   async getUserById(req, res) {
     try {
-      const { id } = req.params.id;
-      const user = await userModel.findOne({
+      const id = parseInt(req.params.id, 10);
+
+      const user = await UserModel.findOne({
         where: { id },
         attributes: { exclude: ["password"] }, // Исключаем поле password из результатов
       });
@@ -52,12 +52,12 @@ class UserController {
       // Проверяем, что тело запроса - массив
       if (!Array.isArray(users)) {
         try {
-          const existingUser = await userModel.findOne({ where: { login } });
+          const existingUser = await UserModel.findOne({ where: { login } });
           if (existingUser) {
             return res.status(400).send("Пользователь уже существует");
           }
 
-          const newUser = await userModel.create({
+          const newUser = await UserModel.create({
             id,
             login,
             password,
@@ -75,13 +75,13 @@ class UserController {
       for (const userData of users) {
         const { id, login, password, name, role } = userData;
 
-        const existingUser = await userModel.findOne({ where: { name } });
+        const existingUser = await UserModel.findOne({ where: { name } });
         if (existingUser) {
           results.push({ id, name, status: "Уже существует" });
           continue;
         }
 
-        const newUser = await userModel.create({
+        const newUser = await UserModel.create({
           id,
           login,
           password,
@@ -103,7 +103,7 @@ class UserController {
     const { login, name, role } = req.body;
 
     try {
-      const [affectedCount] = await userModel.update(
+      const [affectedCount] = await UserModel.update(
         {
           login,
           name,
@@ -118,7 +118,7 @@ class UserController {
         return res.status(404).json({ error: "Пользователь не найден" });
       }
 
-      // const updatedUser = await userModel.findByPk(id); // Получаем обновленную запись
+      // const updatedUser = await UserModel.findByPk(id); // Получаем обновленную запись
 
       res.send("Пользователь отредактирован!");
     } catch (error) {
@@ -138,7 +138,7 @@ class UserController {
         return res.status(400).json({ message: "Недопустимая роль" });
       }
 
-      const usersByRole = await userModel.findByRole(role);
+      const usersByRole = await UserModel.findByRole(role);
       res.json(usersByRole);
     } catch (error) {
       res.status(500).json({ message: "Ошибка получения пользователей" });
@@ -150,7 +150,7 @@ class UserController {
       const { id } = req.params;
       console.log(id);
 
-      await userModel.destroy({
+      await UserModel.destroy({
         where: { id },
         cascade: false, // Если нужно каскадное удаление связанных данных
       });
